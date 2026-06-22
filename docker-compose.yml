@@ -1,0 +1,10 @@
+services:
+  keycloak-db:
+    image: postgres:16-alpine
+    container_name: pulse-keycloak-db
+    environment:
+      POSTGRES_DB: keycloak_db
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak_pass
+    ports:
+      - '5433:5432'
