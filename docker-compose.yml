@@ -8,6 +8,8 @@ services:
       POSTGRES_PASSWORD: keycloak_pass
     ports:
       - '5433:5432'
+    volumes:
+      - ./keycloak_db_data:/var/lib/postgresql/data
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U keycloak -d keycloak_db']
       interval: 5s
@@ -27,6 +29,8 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin_pass
     ports:
       - '8080:8080'
+    volumes:
+      - app_db_data:/var/lib/postgresql/data
     depends_on:
       keycloak-db:
         condition: service_healthy
@@ -52,3 +56,7 @@ services:
     ports:
       - '1025:1025'
       - '8025:8025'
+
+volumes:
+  keycloak_db_data:
+  app_db_data:
