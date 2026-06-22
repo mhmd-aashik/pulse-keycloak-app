@@ -21,3 +21,19 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin_pass
     ports:
       - '8080:8080'
+
+  app-db:
+    image: postgres:16-alpine
+    container_name: pulse-app-db
+    environment:
+      POSTGRES_DB: pulse_app_db
+      POSTGRES_USER: pulse_app
+      POSTGRES_PASSWORD: pulse_app_pass
+    ports:
+      - '5432:5432'
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: pulse-mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
