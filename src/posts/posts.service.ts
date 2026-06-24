@@ -8,8 +8,9 @@ import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DATABASE_CONNECTION } from 'src/database/database.module';
 import * as schema from '../database/schema';
 import { CreatePostDto } from './dto/create-post.dto';
-import { desc, eq } from 'drizzle-orm';
+import { desc, eq, lt } from 'drizzle-orm';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { PostFeedQueryDto } from './dto/post-feed-query.dto';
 
 @Injectable()
 export class PostsService {
@@ -31,8 +32,11 @@ export class PostsService {
     return created[0];
   }
 
-  async getFeed() {
-    const result = await this.db
+  async getFeed(query: PostFeedQueryDto) {
+    const limit = query.limit ?? 10;
+    const cursor = query.cursor;
+
+    const queryBuilder = this.db
       .select({
         id: schema.posts.id,
         title: schema.posts.title,
@@ -47,10 +51,26 @@ export class PostsService {
         },
       })
       .from(schema.posts)
-      .leftJoin(schema.users, eq(schema.posts.authorId, schema.users.id))
-      .orderBy(desc(schema.posts.createdAt));
+      .leftJoin(schema.users, eq(schema.posts.authorId, schema.users.id));
 
-    return result;
+    if (cursor) {
+      queryBuilder.where(lt(schema.posts.createdAt, new Date(cursor)));
+    }
+
+    const result = await queryBuilder
+      .orderBy(desc(schema.posts.createdAt))
+      .limit(limit + 1);
+
+    const hasNextPage = result.length > limit;
+    const data = hasNextPage ? result.slice(0, limit) : result;
+    const nextCursor = hasNextPage
+      ? data[data.length - 1].createdAt.toISOString()
+      : null;
+
+    return {
+      data,
+      nextCursor,
+    };
   }
 
   async findById(id: string) {

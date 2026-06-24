@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import type { AuthenticatedUser } from 'src/auth/authTypes';
@@ -13,6 +14,7 @@ import { CurrentUser } from 'src/auth/current-user.decorator';
 import { CreatePostDto } from './dto/create-post.dto';
 import { Public } from 'src/auth/public.decorator';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { PostFeedQueryDto } from './dto/post-feed-query.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -28,8 +30,8 @@ export class PostsController {
 
   @Public()
   @Get()
-  async getFeed() {
-    return this.postsService.getFeed();
+  async getFeed(@Query() query: PostFeedQueryDto) {
+    return this.postsService.getFeed(query);
   }
 
   @Public()
