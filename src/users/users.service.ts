@@ -1,8 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from '../database/schema';
 import { DATABASE_CONNECTION } from 'src/database/database.module';
-import { eq } from 'drizzle-orm';
+import { desc, eq, sql } from 'drizzle-orm';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -128,5 +128,63 @@ export class UsersService {
       .delete(schema.users)
       .where(eq(schema.users.id, id))
       .returning();
+  }
+
+  async getProfile(userId: string) {
+    // 1. Fetch user profile
+    const userResult = await this.db
+      .select()
+      .from(schema.users)
+      .where(eq(schema.users.id, userId))
+      .limit(1);
+
+    if (!userResult || userResult.length === 0) {
+      throw new NotFoundException('User not found');
+    }
+
+    // 2. Count followers
+    const followersCountResult = await this.db
+      .select({ count: sql<number>`count(*)` })
+      .from(schema.follows)
+      .where(eq(schema.follows.followingId, userId));
+
+    // 3. Count following
+    const followingCountResult = await this.db
+      .select({ count: sql<number>`count(*)` })
+      .from(schema.follows)
+      .where(eq(schema.follows.followerId, userId));
+
+    // 4. Count posts
+    const postsCountResult = await this.db
+      .select({ count: sql<number>`count(*)` })
+      .from(schema.posts)
+      .where(eq(schema.posts.authorId, userId));
+
+    // 5. Fetch their posts
+    const userPosts = await this.db
+      .select({
+        id: schema.posts.id,
+        title: schema.posts.title,
+        content: schema.posts.content,
+        createdAt: schema.posts.createdAt,
+        updatedAt: schema.posts.updatedAt,
+      })
+      .from(schema.posts)
+      .where(eq(schema.posts.authorId, userId))
+      .orderBy(desc(schema.posts.createdAt));
+
+    return {
+      user: {
+        id: schema.users.id,
+        username: schema.users.username,
+        bio: schema.users.bio,
+        avatar: schema.users.avatar,
+        createdAt: schema.users.createdAt,
+      },
+      followersCount: Number(followersCountResult[0]?.count || 0),
+      followingCount: Number(followingCountResult[0]?.count || 0),
+      postsCount: Number(postsCountResult[0]?.count || 0),
+      posts: userPosts,
+    };
   }
 }
