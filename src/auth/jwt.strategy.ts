@@ -4,10 +4,14 @@ import { PassportStrategy } from '@nestjs/passport';
 import { passportJwtSecret } from 'jwks-rsa';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthenticatedUser, KeycloakTokenPayload } from './authTypes';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly usersService: UsersService,
+  ) {
     const keycloakUrl =
       configService.get<string>('KEYCLOAK_URL') || 'http://localhost:8080';
     const realm = configService.get<string>('KEYCLOAK_REALM') || 'pulse';
@@ -36,10 +40,17 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  validate(payload: KeycloakTokenPayload): AuthenticatedUser {
+  async validate(payload: KeycloakTokenPayload): Promise<AuthenticatedUser> {
+    const username =
+      payload.preferred_username || `user_${payload.sub.substring(0, 8)}`;
+    const dbUser = await this.usersService.findOrCreate(payload.sub, username);
+
     return {
-      keycloakId: payload.sub,
-      username: payload.preferred_username,
+      id: dbUser.id,
+      keycloakId: dbUser.keycloakId,
+      username: dbUser.username,
+      bio: dbUser.bio || '',
+      avatar: dbUser.avatar || '',
       email: payload.email,
       emailVerified: payload.email_verified,
       roles: payload.realm_access?.roles || [],

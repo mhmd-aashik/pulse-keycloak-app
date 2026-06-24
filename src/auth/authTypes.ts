@@ -9,8 +9,11 @@ export interface KeycloakTokenPayload {
 }
 
 export interface AuthenticatedUser {
+  id: string;
   keycloakId: string;
   username?: string;
+  bio?: string;
+  avatar?: string;
   email?: string;
   emailVerified?: boolean;
   roles: string[];

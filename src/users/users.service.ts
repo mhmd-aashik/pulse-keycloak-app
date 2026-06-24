@@ -1,0 +1,35 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import * as schema from '../database/schema';
+import { DATABASE_CONNECTION } from 'src/database/database.module';
+import { eq } from 'drizzle-orm';
+
+@Injectable()
+export class UsersService {
+  constructor(
+    @Inject(DATABASE_CONNECTION)
+    private readonly db: NodePgDatabase<typeof schema>,
+  ) {}
+
+  async findOrCreate(keycloakId: string, username: string) {
+    const existingUser = await this.db
+      .select()
+      .from(schema.users)
+      .where(eq(schema.users.keycloakId, keycloakId))
+      .limit(1);
+
+    if (existingUser && existingUser.length > 0) {
+      return existingUser[0];
+    }
+
+    const created = await this.db
+      .insert(schema.users)
+      .values({
+        keycloakId,
+        username,
+      })
+      .returning();
+
+    return created[0];
+  }
+}
