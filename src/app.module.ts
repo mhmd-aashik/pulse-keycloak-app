@@ -16,6 +16,7 @@ import { AdminModule } from './admin/admin.module';
 import { AuditExceptionFilter } from './common/filters/audit-exception.filter';
 import { RequiredActionsGuard } from './auth/required-actions.guard';
 import { FreshAuthGuard } from './auth/fresh-auth.guard';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -29,6 +30,12 @@ import { FreshAuthGuard } from './auth/fresh-auth.guard';
     UsersModule,
     PostsModule,
     AdminModule,
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 100,
+      },
+    ]),
   ],
   controllers: [AppController],
   providers: [
@@ -48,6 +55,10 @@ import { FreshAuthGuard } from './auth/fresh-auth.guard';
     {
       provide: APP_GUARD,
       useClass: FreshAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
     {
       provide: APP_FILTER,
