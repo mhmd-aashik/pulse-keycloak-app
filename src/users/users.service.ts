@@ -64,4 +64,8 @@ export class UsersService {
 
     return updated[0];
   }
+
+  async findAll() {
+    return await this.db.select().from(schema.users);
+  }
 }
