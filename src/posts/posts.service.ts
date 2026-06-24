@@ -46,4 +46,27 @@ export class PostsService {
 
     return result;
   }
+
+  async findById(id: string) {
+    const result = await this.db
+      .select({
+        id: schema.posts.id,
+        title: schema.posts.title,
+        content: schema.posts.content,
+        authorId: schema.posts.authorId,
+        createdAt: schema.posts.createdAt,
+        updatedAt: schema.posts.updatedAt,
+        author: {
+          id: schema.users.id,
+          username: schema.users.username,
+          avatar: schema.users.avatar,
+        },
+      })
+      .from(schema.posts)
+      .leftJoin(schema.users, eq(schema.posts.authorId, schema.users.id))
+      .where(eq(schema.posts.id, id))
+      .limit(1);
+
+    return result && result.length > 0 ? result[0] : null;
+  }
 }
