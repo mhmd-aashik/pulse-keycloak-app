@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+body {
+  font-family: 'Outfit', sans-serif !important;
+  background-color: #06050b !important;
+  color: #f1f5f9 !important;
+}
+
+.navbar-pf {
+  background-color: #121026 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.navbar-pf .navbar-brand {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.sidebar-pf {
+  background-color: #0d0c1d !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.list-group-item {
+  background-color: transparent !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+  color: #94a3b8 !important;
+}
+
+.list-group-item.active,
+.list-group-item.active:hover {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%) !important;
+  border-color: transparent !important;
+  color: #ffffff !important;
+}
+
+.card-pf {
+  background: rgba(18, 16, 38, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+.form-control {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 6px !important;
+  color: #ffffff !important;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%) !important;
+  border: none !important;
+  border-radius: 6px !important;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%) !important;
+}
