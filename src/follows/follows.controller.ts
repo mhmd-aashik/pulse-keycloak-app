@@ -1,4 +1,4 @@
-import { Controller, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import { Controller, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import type { AuthenticatedUser } from 'src/auth/authTypes';
 import { CurrentUser } from 'src/auth/current-user.decorator';
 import { FollowsService } from './follows.service';
@@ -21,5 +21,15 @@ export class FollowsController {
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.followsService.unfollow(user.id, followingId);
+  }
+
+  @Get(':id/followers')
+  async getFollowers(@Param('id', ParseUUIDPipe) userId: string) {
+    return this.followsService.getFollowers(userId);
+  }
+
+  @Get(':id/following')
+  async getFollowing(@Param('id', ParseUUIDPipe) userId: string) {
+    return this.followsService.getFollowing(userId);
   }
 }

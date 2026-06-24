@@ -88,4 +88,34 @@ export class FollowsService {
 
     return { success: true };
   }
+
+  async getFollowers(userId: string) {
+    // Select users that follow userId
+    const results = await this.db
+      .select({
+        id: schema.users.id,
+        username: schema.users.username,
+        avatar: schema.users.avatar,
+      })
+      .from(schema.follows)
+      .innerJoin(schema.users, eq(schema.follows.followerId, schema.users.id))
+      .where(eq(schema.follows.followingId, userId));
+
+    return results;
+  }
+
+  async getFollowing(userId: string) {
+    // Select users that userId is following
+    const results = await this.db
+      .select({
+        id: schema.users.id,
+        username: schema.users.username,
+        avatar: schema.users.avatar,
+      })
+      .from(schema.follows)
+      .innerJoin(schema.users, eq(schema.follows.followingId, schema.users.id))
+      .where(eq(schema.follows.followerId, userId));
+
+    return results;
+  }
 }
