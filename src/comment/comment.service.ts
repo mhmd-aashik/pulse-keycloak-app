@@ -93,7 +93,6 @@ export class CommentsService {
       .orderBy(asc(schema.comments.createdAt));
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async delete(id: string, userId: string, roles: string[] = []) {
     const comment = await this.db
       .select()
@@ -106,8 +105,10 @@ export class CommentsService {
     }
 
     const isAuthor = comment[0].authorId === userId;
+    const isModeratorOrAdmin =
+      roles.includes('moderator') || roles.includes('admin');
 
-    if (!isAuthor) {
+    if (!isAuthor && !isModeratorOrAdmin) {
       throw new ForbiddenException(
         'You are not authorized to delete this comment',
       );
