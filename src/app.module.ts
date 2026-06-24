@@ -19,6 +19,7 @@ import { FreshAuthGuard } from './auth/fresh-auth.guard';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { FollowsModule } from './follows/follows.module';
 import { CommentModule } from './comment/comment.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { CommentModule } from './comment/comment.module';
     ]),
     FollowsModule,
     CommentModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [

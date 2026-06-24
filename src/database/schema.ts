@@ -5,6 +5,7 @@ import {
   timestamp,
   uuid,
   varchar,
+  boolean,
 } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
@@ -81,4 +82,18 @@ export const comments = pgTable('comments', {
     .notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const notifications = pgTable('notifications', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  recipientId: uuid('recipient_id')
+    .references(() => users.id, { onDelete: 'cascade' })
+    .notNull(),
+  senderId: uuid('sender_id')
+    .references(() => users.id, { onDelete: 'cascade' })
+    .notNull(),
+  type: varchar('type', { length: 50 }).notNull(),
+  targetId: uuid('target_id').notNull(),
+  read: boolean('read').default(false).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });

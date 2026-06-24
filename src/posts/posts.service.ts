@@ -12,12 +12,14 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { and, desc, eq, lt } from 'drizzle-orm';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostFeedQueryDto } from './dto/post-feed-query.dto';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class PostsService {
   constructor(
     @Inject(DATABASE_CONNECTION)
     private readonly db: NodePgDatabase<typeof schema>,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   async create(authorId: string, dto: CreatePostDto) {
@@ -228,6 +230,13 @@ export class PostsService {
       userId,
       postId,
     });
+
+    await this.notificationsService.create(
+      post[0].authorId,
+      userId,
+      'like',
+      postId,
+    );
 
     return { success: true };
   }

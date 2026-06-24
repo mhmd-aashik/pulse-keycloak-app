@@ -8,12 +8,14 @@ import { and, eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DATABASE_CONNECTION } from 'src/database/database.module';
 import * as schema from 'src/database/schema';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class FollowsService {
   constructor(
     @Inject(DATABASE_CONNECTION)
     private readonly db: NodePgDatabase<typeof schema>,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   async follow(followerId: string, followingId: string) {
@@ -56,6 +58,13 @@ export class FollowsService {
       followerId,
       followingId,
     });
+
+    await this.notificationsService.create(
+      followingId,
+      followerId,
+      'follow',
+      followerId,
+    );
 
     return { success: true };
   }

@@ -3,9 +3,10 @@ import { PostsService } from './posts.service';
 import { PostsController } from './posts.controller';
 import { DatabaseModule } from 'src/database/database.module';
 import { CommentModule } from 'src/comment/comment.module';
+import { NotificationsModule } from 'src/notifications/notifications.module';
 
 @Module({
-  imports: [DatabaseModule, CommentModule],
+  imports: [DatabaseModule, CommentModule, NotificationsModule],
   providers: [PostsService],
   controllers: [PostsController],
   exports: [PostsService],
