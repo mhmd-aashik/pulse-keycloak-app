@@ -54,6 +54,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       email: payload.email,
       emailVerified: payload.email_verified,
       roles: payload.roles || payload.realm_access?.roles || [],
+      requiredActions: payload.required_actions || [],
     };
   }
 }

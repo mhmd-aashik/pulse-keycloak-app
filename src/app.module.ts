@@ -14,6 +14,7 @@ import { PostsModule } from './posts/posts.module';
 import { RolesGuard } from './auth/roles.guard';
 import { AdminModule } from './admin/admin.module';
 import { AuditExceptionFilter } from './common/filters/audit-exception.filter';
+import { RequiredActionsGuard } from './auth/required-actions.guard';
 
 @Module({
   imports: [
@@ -34,6 +35,10 @@ import { AuditExceptionFilter } from './common/filters/audit-exception.filter';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RequiredActionsGuard,
     },
     {
       provide: APP_GUARD,

@@ -7,6 +7,7 @@ export interface KeycloakTokenPayload {
     roles?: string[];
   };
   roles?: string[];
+  required_actions?: string[];
 }
 
 export interface AuthenticatedUser {
@@ -18,4 +19,5 @@ export interface AuthenticatedUser {
   email?: string;
   emailVerified?: boolean;
   roles: string[];
+  requiredActions?: string[];
 }
