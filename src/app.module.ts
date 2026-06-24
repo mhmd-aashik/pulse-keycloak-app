@@ -15,6 +15,7 @@ import { RolesGuard } from './auth/roles.guard';
 import { AdminModule } from './admin/admin.module';
 import { AuditExceptionFilter } from './common/filters/audit-exception.filter';
 import { RequiredActionsGuard } from './auth/required-actions.guard';
+import { FreshAuthGuard } from './auth/fresh-auth.guard';
 
 @Module({
   imports: [
@@ -43,6 +44,10 @@ import { RequiredActionsGuard } from './auth/required-actions.guard';
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: FreshAuthGuard,
     },
     {
       provide: APP_FILTER,

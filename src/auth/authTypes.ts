@@ -10,6 +10,7 @@ export interface KeycloakTokenPayload {
   required_actions?: string[];
   acr?: string;
   amr?: string[];
+  authTime?: number;
 }
 
 export interface AuthenticatedUser {
@@ -24,4 +25,5 @@ export interface AuthenticatedUser {
   requiredActions?: string[];
   acr?: string;
   amr?: string[];
+  auth_time?: number;
 }

@@ -57,6 +57,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       requiredActions: payload.required_actions || [],
       acr: payload.acr,
       amr: payload.amr,
+      auth_time: payload.authTime,
     };
   }
 }

@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Patch } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Patch } from '@nestjs/common';
 import type { AuthenticatedUser } from 'src/auth/authTypes';
 import { CurrentUser } from 'src/auth/current-user.decorator';
 import { UpdateProfileDto } from './update-profile.dto';
 import { UsersService } from './users.service';
+import { RequireFreshAuth } from 'src/auth/fresh-auth.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -28,5 +29,12 @@ export class UsersController {
   @Get('me/sessions')
   async getSessions(@CurrentUser() user: AuthenticatedUser) {
     return this.usersService.getSessions(user.keycloakId);
+  }
+
+  @Delete('me')
+  @RequireFreshAuth()
+  async deleteMe(@CurrentUser() user: AuthenticatedUser) {
+    await this.usersService.delete(user.id);
+    return { success: true };
   }
 }
