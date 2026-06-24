@@ -19,7 +19,16 @@ export class UsersService {
       .limit(1);
 
     if (existingUser && existingUser.length > 0) {
-      return existingUser[0];
+      const user = existingUser[0];
+      if (user.username !== username) {
+        const updatedUser = await this.db
+          .update(schema.users)
+          .set({ username, updatedAt: new Date() })
+          .where(eq(schema.users.keycloakId, keycloakId))
+          .returning();
+        return updatedUser[0];
+      }
+      return user;
     }
 
     const created = await this.db
