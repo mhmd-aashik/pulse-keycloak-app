@@ -122,4 +122,30 @@ export class PostsService {
 
     return updated[0];
   }
+
+  async delete(id: string, authorId: string, roles: string[] = []) {
+    const post = await this.db
+      .select()
+      .from(schema.posts)
+      .where(eq(schema.posts.id, id))
+      .limit(1);
+
+    if (!post || post.length === 0) {
+      throw new NotFoundException('Post not found');
+    }
+
+    const isAuthor = post[0].authorId === authorId;
+    const isModeratorOrAdmin =
+      roles.includes('moderator') || roles.includes('admin');
+
+    if (!isAuthor && !isModeratorOrAdmin) {
+      throw new ForbiddenException(
+        'You are not authorized to delete this post',
+      );
+    }
+
+    await this.db.delete(schema.posts).where(eq(schema.posts.id, id));
+
+    return { success: true };
+  }
 }

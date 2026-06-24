@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
@@ -51,5 +52,13 @@ export class PostsController {
     @Body() updatePostDto: UpdatePostDto,
   ) {
     return this.postsService.update(id, user.id, updatePostDto);
+  }
+
+  @Delete(':id')
+  async delete(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.postsService.delete(id, user.id, user.roles);
   }
 }
