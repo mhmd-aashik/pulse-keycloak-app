@@ -130,7 +130,7 @@ export class UsersService {
       .returning();
   }
 
-  async getProfile(userId: string) {
+  async getProfile(userId: string, currentUserId?: string) {
     // 1. Fetch user profile
     const userResult = await this.db
       .select()
@@ -160,27 +160,53 @@ export class UsersService {
       .from(schema.posts)
       .where(eq(schema.posts.authorId, userId));
 
-    // 5. Fetch their posts
+    // 5. Fetch their posts (with joins)
+    const likesSubquery = this.db
+      .select({
+        postId: schema.likes.postId,
+        count: sql<number>`count(*)::int`.as('likes_count'),
+      })
+      .from(schema.likes)
+      .groupBy(schema.likes.postId)
+      .as('likes_sub');
+
+    const commentsSubquery = this.db
+      .select({
+        postId: schema.comments.postId,
+        count: sql<number>`count(*)::int`.as('comments_count'),
+      })
+      .from(schema.comments)
+      .groupBy(schema.comments.postId)
+      .as('comments_sub');
+
     const userPosts = await this.db
       .select({
         id: schema.posts.id,
         title: schema.posts.title,
         content: schema.posts.content,
+        authorId: schema.posts.authorId,
         createdAt: schema.posts.createdAt,
         updatedAt: schema.posts.updatedAt,
+        author: {
+          id: schema.users.id,
+          username: schema.users.username,
+          avatar: schema.users.avatar,
+        },
+        likesCount: sql<number>`coalesce(${likesSubquery.count}, 0)`,
+        commentsCount: sql<number>`coalesce(${commentsSubquery.count}, 0)`,
+        isLiked: currentUserId
+          ? sql<boolean>`exists(select 1 from ${schema.likes} where ${schema.likes.postId} = ${schema.posts.id} and ${schema.likes.userId} = ${currentUserId}::uuid)`
+          : sql<boolean>`false`,
       })
       .from(schema.posts)
+      .leftJoin(schema.users, eq(schema.posts.authorId, schema.users.id))
+      .leftJoin(likesSubquery, eq(schema.posts.id, likesSubquery.postId))
+      .leftJoin(commentsSubquery, eq(schema.posts.id, commentsSubquery.postId))
       .where(eq(schema.posts.authorId, userId))
       .orderBy(desc(schema.posts.createdAt));
 
     return {
-      user: {
-        id: schema.users.id,
-        username: schema.users.username,
-        bio: schema.users.bio,
-        avatar: schema.users.avatar,
-        createdAt: schema.users.createdAt,
-      },
+      user: userResult[0],
       followersCount: Number(followersCountResult[0]?.count || 0),
       followingCount: Number(followingCountResult[0]?.count || 0),
       postsCount: Number(postsCountResult[0]?.count || 0),

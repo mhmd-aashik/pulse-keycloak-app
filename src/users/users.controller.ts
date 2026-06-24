@@ -42,7 +42,10 @@ export class UsersController {
 
   @Public()
   @Get(':id/profile')
-  async getProfile(@Param('id', ParseUUIDPipe) id: string) {
-    return this.usersService.getProfile(id);
+  async getProfile(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user?: AuthenticatedUser,
+  ) {
+    return this.usersService.getProfile(id, user?.id);
   }
 }
