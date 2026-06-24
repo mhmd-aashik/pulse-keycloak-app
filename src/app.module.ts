@@ -17,6 +17,7 @@ import { AuditExceptionFilter } from './common/filters/audit-exception.filter';
 import { RequiredActionsGuard } from './auth/required-actions.guard';
 import { FreshAuthGuard } from './auth/fresh-auth.guard';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { FollowsModule } from './follows/follows.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
         limit: 100,
       },
     ]),
+    FollowsModule,
   ],
   controllers: [AppController],
   providers: [

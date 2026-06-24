@@ -15,6 +15,13 @@
       "when": 1782282951704,
       "tag": "0001_smooth_krista_starr",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782334463830,
+      "tag": "0002_brainy_hobgoblin",
+      "breakpoints": true
     }
   ]
 }

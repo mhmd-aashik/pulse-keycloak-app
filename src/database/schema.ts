@@ -1,4 +1,11 @@
-import { text, timestamp, varchar, uuid, pgTable } from 'drizzle-orm/pg-core';
+import {
+  primaryKey,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+  varchar,
+} from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -20,3 +27,27 @@ export const posts = pgTable('posts', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
+
+export const follows = pgTable(
+  'follow',
+
+  {
+    followerId: uuid('follower_id')
+      .references(() => users.id, { onDelete: 'cascade' })
+
+      .notNull(),
+
+    followingId: uuid('following_id')
+      .references(() => users.id, { onDelete: 'cascade' })
+
+      .notNull(),
+
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+
+  (table) => [
+    primaryKey({
+      columns: [table.followerId, table.followingId],
+    }),
+  ],
+);
