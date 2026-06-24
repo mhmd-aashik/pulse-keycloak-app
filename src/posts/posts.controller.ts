@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   NotFoundException,
   Param,
@@ -26,6 +27,9 @@ export class PostsController {
     @CurrentUser() user: AuthenticatedUser,
     @Body() createPostDto: CreatePostDto,
   ) {
+    if (user.emailVerified === false) {
+      throw new ForbiddenException('Please verify your email to create a post');
+    }
     return this.postsService.create(user.id, createPostDto);
   }
 
