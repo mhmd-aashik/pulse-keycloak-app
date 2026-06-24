@@ -21,7 +21,9 @@
     "prepare": "husky",
     "stack:up": "docker-compose up -d",
     "stack:down": "docker-compose down",
-    "stack:logs": "docker-compose logs -f"
+    "stack:logs": "docker-compose logs -f",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
