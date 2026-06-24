@@ -24,4 +24,9 @@ export class UsersController {
       avatar: updated.avatar,
     };
   }
+
+  @Get('me/sessions')
+  async getSessions(@CurrentUser() user: AuthenticatedUser) {
+    return this.usersService.getSessions(user.keycloakId);
+  }
 }
