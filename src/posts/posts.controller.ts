@@ -4,6 +4,7 @@ import {
   Get,
   NotFoundException,
   Param,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
@@ -11,6 +12,7 @@ import type { AuthenticatedUser } from 'src/auth/authTypes';
 import { CurrentUser } from 'src/auth/current-user.decorator';
 import { CreatePostDto } from './dto/create-post.dto';
 import { Public } from 'src/auth/public.decorator';
+import { UpdatePostDto } from './dto/update-post.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -38,5 +40,14 @@ export class PostsController {
       throw new NotFoundException('Post not found');
     }
     return post;
+  }
+
+  @Patch(':id')
+  async update(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() updatePostDto: UpdatePostDto,
+  ) {
+    return this.postsService.update(id, user.id, updatePostDto);
   }
 }

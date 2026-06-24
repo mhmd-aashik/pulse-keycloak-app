@@ -1,9 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DATABASE_CONNECTION } from 'src/database/database.module';
 import * as schema from '../database/schema';
 import { CreatePostDto } from './dto/create-post.dto';
 import { desc, eq } from 'drizzle-orm';
+import { UpdatePostDto } from './dto/update-post.dto';
 
 @Injectable()
 export class PostsService {
@@ -68,5 +74,32 @@ export class PostsService {
       .limit(1);
 
     return result && result.length > 0 ? result[0] : null;
+  }
+
+  async update(id: string, authorId: string, dto: UpdatePostDto) {
+    const post = await this.db
+      .select()
+      .from(schema.posts)
+      .where(eq(schema.posts.id, id))
+      .limit(1);
+
+    if (!post || post.length === 0) {
+      throw new NotFoundException('Post not found');
+    }
+
+    if (post[0].authorId !== authorId) {
+      throw new ForbiddenException('You are not authorized to edit this post');
+    }
+
+    const updated = await this.db
+      .update(schema.posts)
+      .set({
+        ...dto,
+        updatedAt: new Date(),
+      })
+      .where(eq(schema.posts.id, id))
+      .returning();
+
+    return updated[0];
   }
 }
