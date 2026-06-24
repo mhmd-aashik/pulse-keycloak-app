@@ -32,4 +32,14 @@ export class UsersService {
 
     return created[0];
   }
+
+  async findByKeycloakId(keycloakId: string) {
+    const result = await this.db
+      .select()
+      .from(schema.users)
+      .where(eq(schema.users.keycloakId, keycloakId))
+      .limit(1);
+
+    return result && result.length > 0 ? result[0] : null;
+  }
 }
