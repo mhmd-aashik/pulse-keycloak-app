@@ -47,6 +47,10 @@ class EnvironmentVariables {
   KEYCLOAK_CLIENT_ID = 'pulse-backend';
 
   @IsString()
+  @IsOptional()
+  KEYCLOAK_AUDIENCES = 'pulse-backend,pulse-spa,account';
+
+  @IsString()
   KEYCLOAK_CLIENT_SECRET = 'change_me_client_secret';
 }
 

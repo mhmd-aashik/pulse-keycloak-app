@@ -12,6 +12,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       configService.get<string>('KEYCLOAK_URL') || 'http://localhost:8080';
     const realm = configService.get<string>('KEYCLOAK_REALM') || 'pulse';
     const jwksUri = `${keycloakUrl}/realms/${realm}/protocol/openid-connect/certs`;
+    const backendClientId =
+      configService.get<string>('KEYCLOAK_CLIENT_ID') || 'pulse-backend';
+    const audiencesRaw = configService.get<string>('KEYCLOAK_AUDIENCES');
+    const audiences = (
+      audiencesRaw
+        ? audiencesRaw.split(',').map((s) => s.trim())
+        : [backendClientId, 'pulse-spa', 'account']
+    ).filter(Boolean);
 
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -24,7 +32,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       }),
       algorithms: ['RS256'],
       issuer: `${keycloakUrl}/realms/${realm}`,
-      audience: ['pulse-backend', 'pulse-spa'],
+      audience: audiences,
     });
   }
 
