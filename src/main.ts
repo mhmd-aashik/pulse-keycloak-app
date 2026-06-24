@@ -16,6 +16,17 @@ async function bootstrap(): Promise<void> {
       transform: true,
     }),
   );
+
+  const { DocumentBuilder, SwaggerModule } = await import('@nestjs/swagger');
+  const config = new DocumentBuilder()
+    .setTitle('Pulse API')
+    .setDescription('The Pulse Social Media API, integrated with Keycloak')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
+
   await app.listen(process.env.PORT ?? 3000);
 }
 void bootstrap();
