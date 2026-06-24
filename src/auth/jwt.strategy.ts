@@ -22,6 +22,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         jwksUri,
       }),
       algorithms: ['RS256'],
+      issuer: `${keycloakUrl}/realms/${realm}`,
+      audience: ['pulse-backend', 'pulse-spa'],
     });
   }
 
