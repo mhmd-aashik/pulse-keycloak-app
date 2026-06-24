@@ -43,6 +43,14 @@ export class PostsController {
     return this.postsService.getFeed(query, user?.id);
   }
 
+  @Get('feed')
+  async getPersonalizedFeed(
+    @CurrentUser() user: AuthenticatedUser,
+    @Query() query: PostFeedQueryDto,
+  ) {
+    return this.postsService.getPersonalizedFeed(user.id, query);
+  }
+
   @Public()
   @Get(':id')
   async getOne(
@@ -71,14 +79,6 @@ export class PostsController {
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.postsService.delete(id, user.id, user.roles);
-  }
-
-  @Get('feed')
-  async getPersonalizedFeed(
-    @CurrentUser() user: AuthenticatedUser,
-    @Query() query: PostFeedQueryDto,
-  ) {
-    return this.postsService.getPersonalizedFeed(user.id, query);
   }
 
   @Post(':id/like')
