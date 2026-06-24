@@ -22,6 +22,7 @@
     "stack:up": "docker-compose up -d",
     "stack:down": "docker-compose down",
     "stack:logs": "docker-compose logs -f",
+    "keycloak:themes": "bash keycloak/set-realm-themes.sh",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate"
   },
