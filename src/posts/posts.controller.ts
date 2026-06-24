@@ -36,14 +36,20 @@ export class PostsController {
 
   @Public()
   @Get()
-  async getFeed(@Query() query: PostFeedQueryDto) {
-    return this.postsService.getFeed(query);
+  async getFeed(
+    @Query() query: PostFeedQueryDto,
+    @CurrentUser() user?: AuthenticatedUser,
+  ) {
+    return this.postsService.getFeed(query, user?.id);
   }
 
   @Public()
   @Get(':id')
-  async getOne(@Param('id') id: string) {
-    const post = await this.postsService.findById(id);
+  async getOne(
+    @Param('id') id: string,
+    @CurrentUser() user?: AuthenticatedUser,
+  ) {
+    const post = await this.postsService.findById(id, user?.id);
     if (!post) {
       throw new NotFoundException('Post not found');
     }

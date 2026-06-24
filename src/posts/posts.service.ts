@@ -9,7 +9,7 @@ import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DATABASE_CONNECTION } from 'src/database/database.module';
 import * as schema from '../database/schema';
 import { CreatePostDto } from './dto/create-post.dto';
-import { and, desc, eq, lt } from 'drizzle-orm';
+import { and, desc, eq, lt, sql } from 'drizzle-orm';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostFeedQueryDto } from './dto/post-feed-query.dto';
 import { NotificationsService } from 'src/notifications/notifications.service';
@@ -35,9 +35,27 @@ export class PostsService {
     return created[0];
   }
 
-  async getFeed(query: PostFeedQueryDto) {
+  async getFeed(query: PostFeedQueryDto, currentUserId?: string) {
     const limit = query.limit ?? 10;
     const cursor = query.cursor;
+
+    const likesSubquery = this.db
+      .select({
+        postId: schema.likes.postId,
+        count: sql<number>`count(*)::int`.as('likes_count'),
+      })
+      .from(schema.likes)
+      .groupBy(schema.likes.postId)
+      .as('likes_sub');
+
+    const commentsSubquery = this.db
+      .select({
+        postId: schema.comments.postId,
+        count: sql<number>`count(*)::int`.as('comments_count'),
+      })
+      .from(schema.comments)
+      .groupBy(schema.comments.postId)
+      .as('comments_sub');
 
     const queryBuilder = this.db
       .select({
@@ -52,9 +70,16 @@ export class PostsService {
           username: schema.users.username,
           avatar: schema.users.avatar,
         },
+        likesCount: sql<number>`coalesce(${likesSubquery.count}, 0)`,
+        commentsCount: sql<number>`coalesce(${commentsSubquery.count}, 0)`,
+        isLiked: currentUserId
+          ? sql<boolean>`exists(select 1 from ${schema.likes} where ${schema.likes.postId} = ${schema.posts.id} and ${schema.likes.userId} = ${currentUserId}::uuid)`
+          : sql<boolean>`false`,
       })
       .from(schema.posts)
-      .leftJoin(schema.users, eq(schema.posts.authorId, schema.users.id));
+      .leftJoin(schema.users, eq(schema.posts.authorId, schema.users.id))
+      .leftJoin(likesSubquery, eq(schema.posts.id, likesSubquery.postId))
+      .leftJoin(commentsSubquery, eq(schema.posts.id, commentsSubquery.postId));
 
     if (cursor) {
       queryBuilder.where(lt(schema.posts.createdAt, new Date(cursor)));
@@ -76,7 +101,25 @@ export class PostsService {
     };
   }
 
-  async findById(id: string) {
+  async findById(id: string, currentUserId?: string) {
+    const likesSubquery = this.db
+      .select({
+        postId: schema.likes.postId,
+        count: sql<number>`count(*)::int`.as('likes_count'),
+      })
+      .from(schema.likes)
+      .groupBy(schema.likes.postId)
+      .as('likes_sub');
+
+    const commentsSubquery = this.db
+      .select({
+        postId: schema.comments.postId,
+        count: sql<number>`count(*)::int`.as('comments_count'),
+      })
+      .from(schema.comments)
+      .groupBy(schema.comments.postId)
+      .as('comments_sub');
+
     const result = await this.db
       .select({
         id: schema.posts.id,
@@ -90,9 +133,16 @@ export class PostsService {
           username: schema.users.username,
           avatar: schema.users.avatar,
         },
+        likesCount: sql<number>`coalesce(${likesSubquery.count}, 0)`,
+        commentsCount: sql<number>`coalesce(${commentsSubquery.count}, 0)`,
+        isLiked: currentUserId
+          ? sql<boolean>`exists(select 1 from ${schema.likes} where ${schema.likes.postId} = ${schema.posts.id} and ${schema.likes.userId} = ${currentUserId}::uuid)`
+          : sql<boolean>`false`,
       })
       .from(schema.posts)
       .leftJoin(schema.users, eq(schema.posts.authorId, schema.users.id))
+      .leftJoin(likesSubquery, eq(schema.posts.id, likesSubquery.postId))
+      .leftJoin(commentsSubquery, eq(schema.posts.id, commentsSubquery.postId))
       .where(eq(schema.posts.id, id))
       .limit(1);
 
@@ -156,6 +206,24 @@ export class PostsService {
     const limit = query.limit ?? 10;
     const cursor = query.cursor;
 
+    const likesSubquery = this.db
+      .select({
+        postId: schema.likes.postId,
+        count: sql<number>`count(*)::int`.as('likes_count'),
+      })
+      .from(schema.likes)
+      .groupBy(schema.likes.postId)
+      .as('likes_sub');
+
+    const commentsSubquery = this.db
+      .select({
+        postId: schema.comments.postId,
+        count: sql<number>`count(*)::int`.as('comments_count'),
+      })
+      .from(schema.comments)
+      .groupBy(schema.comments.postId)
+      .as('comments_sub');
+
     const queryBuilder = this.db
       .select({
         id: schema.posts.id,
@@ -169,13 +237,18 @@ export class PostsService {
           username: schema.users.username,
           avatar: schema.users.avatar,
         },
+        likesCount: sql<number>`coalesce(${likesSubquery.count}, 0)`,
+        commentsCount: sql<number>`coalesce(${commentsSubquery.count}, 0)`,
+        isLiked: sql<boolean>`exists(select 1 from ${schema.likes} where ${schema.likes.postId} = ${schema.posts.id} and ${schema.likes.userId} = ${userId}::uuid)`,
       })
       .from(schema.posts)
       .innerJoin(
         schema.follows,
         eq(schema.posts.authorId, schema.follows.followingId),
       )
-      .leftJoin(schema.users, eq(schema.posts.authorId, schema.users.id));
+      .leftJoin(schema.users, eq(schema.posts.authorId, schema.users.id))
+      .leftJoin(likesSubquery, eq(schema.posts.id, likesSubquery.postId))
+      .leftJoin(commentsSubquery, eq(schema.posts.id, commentsSubquery.postId));
 
     const conditions = [eq(schema.follows.followerId, userId)];
     if (cursor) {
