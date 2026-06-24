@@ -8,6 +8,8 @@ export interface KeycloakTokenPayload {
   };
   roles?: string[];
   required_actions?: string[];
+  acr?: string;
+  amr?: string[];
 }
 
 export interface AuthenticatedUser {
@@ -20,4 +22,6 @@ export interface AuthenticatedUser {
   emailVerified?: boolean;
   roles: string[];
   requiredActions?: string[];
+  acr?: string;
+  amr?: string[];
 }
