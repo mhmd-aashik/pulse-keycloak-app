@@ -8,7 +8,7 @@ import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DATABASE_CONNECTION } from 'src/database/database.module';
 import * as schema from '../database/schema';
 import { CreatePostDto } from './dto/create-post.dto';
-import { desc, eq, lt } from 'drizzle-orm';
+import { and, desc, eq, lt } from 'drizzle-orm';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostFeedQueryDto } from './dto/post-feed-query.dto';
 
@@ -147,5 +147,53 @@ export class PostsService {
     await this.db.delete(schema.posts).where(eq(schema.posts.id, id));
 
     return { success: true };
+  }
+
+  async getPersonalizedFeed(userId: string, query: PostFeedQueryDto) {
+    const limit = query.limit ?? 10;
+    const cursor = query.cursor;
+
+    const queryBuilder = this.db
+      .select({
+        id: schema.posts.id,
+        title: schema.posts.title,
+        content: schema.posts.content,
+        authorId: schema.posts.authorId,
+        createdAt: schema.posts.createdAt,
+        updatedAt: schema.posts.updatedAt,
+        author: {
+          id: schema.users.id,
+          username: schema.users.username,
+          avatar: schema.users.avatar,
+        },
+      })
+      .from(schema.posts)
+      .innerJoin(
+        schema.follows,
+        eq(schema.posts.authorId, schema.follows.followingId),
+      )
+      .leftJoin(schema.users, eq(schema.posts.authorId, schema.users.id));
+
+    const conditions = [eq(schema.follows.followerId, userId)];
+    if (cursor) {
+      conditions.push(lt(schema.posts.createdAt, new Date(cursor)));
+    }
+
+    queryBuilder.where(and(...conditions));
+
+    const result = await queryBuilder
+      .orderBy(desc(schema.posts.createdAt))
+      .limit(limit + 1);
+
+    const hasNextPage = result.length > limit;
+    const data = hasNextPage ? result.slice(0, limit) : result;
+    const nextCursor = hasNextPage
+      ? data[data.length - 1].createdAt.toISOString()
+      : null;
+
+    return {
+      data,
+      nextCursor,
+    };
   }
 }
