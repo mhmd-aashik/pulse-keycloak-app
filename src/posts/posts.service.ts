@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Inject,
   Injectable,
@@ -195,5 +196,74 @@ export class PostsService {
       data,
       nextCursor,
     };
+  }
+
+  async like(userId: string, postId: string) {
+    // 1. Verify post exists
+    const post = await this.db
+      .select()
+      .from(schema.posts)
+      .where(eq(schema.posts.id, postId))
+      .limit(1);
+
+    if (!post || post.length === 0) {
+      throw new NotFoundException('Post not found');
+    }
+
+    // 2. Check if already liked
+    const existing = await this.db
+      .select()
+      .from(schema.likes)
+      .where(
+        and(eq(schema.likes.userId, userId), eq(schema.likes.postId, postId)),
+      )
+      .limit(1);
+
+    if (existing && existing.length > 0) {
+      throw new BadRequestException('You have already liked this post');
+    }
+
+    // 3. Insert like
+    await this.db.insert(schema.likes).values({
+      userId,
+      postId,
+    });
+
+    return { success: true };
+  }
+
+  async unlike(userId: string, postId: string) {
+    // 1. Verify post exists
+    const post = await this.db
+      .select()
+      .from(schema.posts)
+      .where(eq(schema.posts.id, postId))
+      .limit(1);
+
+    if (!post || post.length === 0) {
+      throw new NotFoundException('Post not found');
+    }
+
+    // 2. Check if liked
+    const existing = await this.db
+      .select()
+      .from(schema.likes)
+      .where(
+        and(eq(schema.likes.userId, userId), eq(schema.likes.postId, postId)),
+      )
+      .limit(1);
+
+    if (!existing || existing.length === 0) {
+      throw new BadRequestException('You have not liked this post');
+    }
+
+    // 3. Delete like
+    await this.db
+      .delete(schema.likes)
+      .where(
+        and(eq(schema.likes.userId, userId), eq(schema.likes.postId, postId)),
+      );
+
+    return { success: true };
   }
 }

@@ -51,3 +51,34 @@ export const follows = pgTable(
     }),
   ],
 );
+
+export const likes = pgTable(
+  'likes',
+  {
+    userId: uuid('user_id')
+      .references(() => users.id, { onDelete: 'cascade' })
+      .notNull(),
+    postId: uuid('post_id')
+      .references(() => posts.id, { onDelete: 'cascade' })
+      .notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [
+    primaryKey({
+      columns: [table.userId, table.postId],
+    }),
+  ],
+);
+
+export const comments = pgTable('comments', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  content: text('content').notNull(),
+  authorId: uuid('author_id')
+    .references(() => users.id, { onDelete: 'cascade' })
+    .notNull(),
+  postId: uuid('post_id')
+    .references(() => posts.id, { onDelete: 'cascade' })
+    .notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});

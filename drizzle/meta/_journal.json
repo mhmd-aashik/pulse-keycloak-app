@@ -22,6 +22,13 @@
       "when": 1782334463830,
       "tag": "0002_brainy_hobgoblin",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1782336664417,
+      "tag": "0003_amazing_umar",
+      "breakpoints": true
     }
   ]
 }

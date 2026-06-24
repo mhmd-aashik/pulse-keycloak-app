@@ -6,6 +6,7 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Query,
@@ -72,5 +73,21 @@ export class PostsController {
     @Query() query: PostFeedQueryDto,
   ) {
     return this.postsService.getPersonalizedFeed(user.id, query);
+  }
+
+  @Post(':id/like')
+  async like(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.postsService.like(user.id, id);
+  }
+
+  @Post(':id/unlike')
+  async unlike(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.postsService.unlike(user.id, id);
   }
 }
