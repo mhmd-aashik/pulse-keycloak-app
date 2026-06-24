@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { passportJwtSecret } from 'jwks-rsa';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { KeycloakTokenPayload } from './authTypes';
+import { AuthenticatedUser, KeycloakTokenPayload } from './authTypes';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -28,7 +28,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  validate(payload: KeycloakTokenPayload) {
+  validate(payload: KeycloakTokenPayload): AuthenticatedUser {
     return {
       keycloakId: payload.sub,
       username: payload.preferred_username,

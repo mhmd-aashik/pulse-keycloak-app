@@ -7,3 +7,11 @@ export interface KeycloakTokenPayload {
     roles?: string[];
   };
 }
+
+export interface AuthenticatedUser {
+  keycloakId: string;
+  username?: string;
+  email?: string;
+  emailVerified?: boolean;
+  roles: string[];
+}
