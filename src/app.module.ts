@@ -21,6 +21,7 @@ import { FollowsModule } from './follows/follows.module';
 import { CommentModule } from './comment/comment.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { SearchModule } from './search/search.module';
+import { ModerationModule } from './moderation/moderation.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { SearchModule } from './search/search.module';
     CommentModule,
     NotificationsModule,
     SearchModule,
+    ModerationModule,
   ],
   controllers: [AppController],
   providers: [

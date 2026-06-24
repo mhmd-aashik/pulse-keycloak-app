@@ -97,3 +97,15 @@ export const notifications = pgTable('notifications', {
   read: boolean('read').default(false).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
+
+export const reports = pgTable('reports', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  reporterId: uuid('reporter_id')
+    .references(() => users.id, { onDelete: 'cascade' })
+    .notNull(),
+  contentType: varchar('content_type', { length: 50 }).notNull(), // 'post' or 'comment'
+  contentId: uuid('content_id').notNull(),
+  reason: text('reason').notNull(),
+  status: varchar('status', { length: 50 }).default('pending').notNull(), // 'pending' or 'resolved'
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
