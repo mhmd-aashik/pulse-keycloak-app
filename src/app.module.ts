@@ -20,6 +20,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { FollowsModule } from './follows/follows.module';
 import { CommentModule } from './comment/comment.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     FollowsModule,
     CommentModule,
     NotificationsModule,
+    SearchModule,
   ],
   controllers: [AppController],
   providers: [
