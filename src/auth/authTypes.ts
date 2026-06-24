@@ -6,6 +6,7 @@ export interface KeycloakTokenPayload {
   realm_access?: {
     roles?: string[];
   };
+  roles?: string[];
 }
 
 export interface AuthenticatedUser {

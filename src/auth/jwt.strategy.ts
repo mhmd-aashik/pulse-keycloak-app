@@ -53,7 +53,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       avatar: dbUser.avatar || '',
       email: payload.email,
       emailVerified: payload.email_verified,
-      roles: payload.realm_access?.roles || [],
+      roles: payload.roles || payload.realm_access?.roles || [],
     };
   }
 }
