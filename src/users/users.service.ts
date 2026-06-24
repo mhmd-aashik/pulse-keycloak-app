@@ -42,4 +42,17 @@ export class UsersService {
 
     return result && result.length > 0 ? result[0] : null;
   }
+
+  async update(id: string, values: { bio?: string; avatar?: string }) {
+    const updated = await this.db
+      .update(schema.users)
+      .set({
+        ...values,
+        updatedAt: new Date(),
+      })
+      .where(eq(schema.users.id, id))
+      .returning();
+
+    return updated[0];
+  }
 }
