@@ -19,7 +19,8 @@ RUN bun install --frozen-lockfile --production --ignore-scripts
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/drizzle ./drizzle
 COPY --from=builder /app/drizzle.config.ts ./
+COPY --from=builder /app/src/database ./src/database
 
 ENV NODE_PATH=/app/dist
 EXPOSE 3000
-CMD ["bun", "dist/src/main.js"]
+CMD ["sh", "-c", "bun run db:migrate && bun dist/src/main.js"]
