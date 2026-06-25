@@ -13,7 +13,8 @@ FROM oven/bun:1-alpine AS runner
 WORKDIR /app
 
 COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile --production
+ENV HUSKY=0
+RUN bun install --frozen-lockfile --production --ignore-scripts
 
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/drizzle ./drizzle
