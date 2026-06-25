@@ -1,59 +1,209 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+/* Pulse — Instagram-inspired account management theme */
 
-body {
-  font-family: 'Outfit', sans-serif !important;
-  background-color: #06050b !important;
-  color: #f1f5f9 !important;
+:root {
+  --pulse-bg: #fafafa;
+  --pulse-surface: #ffffff;
+  --pulse-border: #dbdbdb;
+  --pulse-text: #262626;
+  --pulse-text-muted: #8e8e8e;
+  --pulse-primary: #0095f6;
+  --pulse-primary-hover: #1877f2;
+  --pulse-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
+body,
+.pf-v5-c-page {
+  font-family: var(--pulse-font) !important;
+  background: var(--pulse-bg) !important;
+  color: var(--pulse-text) !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Top navigation — Instagram-style minimal header */
+.pf-v5-c-masthead,
 .navbar-pf {
-  background-color: #121026 !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: var(--pulse-surface) !important;
+  border-bottom: 1px solid var(--pulse-border) !important;
+  box-shadow: none !important;
 }
 
+.pf-v5-c-masthead .pf-v5-c-brand,
 .navbar-pf .navbar-brand {
-  color: #ffffff !important;
-  font-weight: 700 !important;
+  color: var(--pulse-text) !important;
+  font-weight: 600 !important;
+  font-size: 18px !important;
 }
 
+.pf-v5-c-masthead .pf-v5-c-button,
+.navbar-pf .nav li a {
+  color: var(--pulse-text) !important;
+  font-size: 14px !important;
+}
+
+/* Sidebar — clean white panel */
+.pf-v5-c-page__sidebar,
 .sidebar-pf {
-  background-color: #0d0c1d !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: var(--pulse-surface) !important;
+  border-right: 1px solid var(--pulse-border) !important;
 }
 
+.pf-v5-c-nav__link,
 .list-group-item {
-  background-color: transparent !important;
-  border-color: rgba(255, 255, 255, 0.05) !important;
-  color: #94a3b8 !important;
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid var(--pulse-border) !important;
+  color: var(--pulse-text) !important;
+  font-size: 14px !important;
+  padding: 16px 20px !important;
+  border-radius: 0 !important;
 }
 
+.pf-v5-c-nav__link:hover,
+.list-group-item:hover {
+  background: var(--pulse-bg) !important;
+}
+
+.pf-v5-c-nav__link.pf-m-current,
 .list-group-item.active,
 .list-group-item.active:hover {
-  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%) !important;
-  border-color: transparent !important;
-  color: #ffffff !important;
+  background: var(--pulse-bg) !important;
+  color: var(--pulse-text) !important;
+  font-weight: 600 !important;
+  border-left: 2px solid var(--pulse-text) !important;
 }
 
+/* Content cards */
+.pf-v5-c-card,
 .card-pf {
-  background: rgba(18, 16, 38, 0.6) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-radius: 12px !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+  background: var(--pulse-surface) !important;
+  border: 1px solid var(--pulse-border) !important;
+  border-radius: 1px !important;
+  box-shadow: none !important;
 }
 
+.pf-v5-c-card__title,
+.card-pf h1,
+.card-pf h2 {
+  font-size: 20px !important;
+  font-weight: 300 !important;
+  color: var(--pulse-text) !important;
+}
+
+/* Form controls */
+.pf-v5-c-form-control,
 .form-control {
-  background-color: rgba(255, 255, 255, 0.03) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-radius: 6px !important;
-  color: #ffffff !important;
+  background: var(--pulse-bg) !important;
+  border: 1px solid var(--pulse-border) !important;
+  border-radius: 3px !important;
+  color: var(--pulse-text) !important;
+  font-size: 14px !important;
+  padding: 9px 12px !important;
 }
 
+.pf-v5-c-form-control:focus,
+.form-control:focus {
+  border-color: #a8a8a8 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.pf-v5-c-form__label,
+.control-label {
+  color: var(--pulse-text-muted) !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* Buttons */
+.pf-v5-c-button.pf-m-primary,
 .btn-primary {
-  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%) !important;
+  background: var(--pulse-primary) !important;
   border: none !important;
-  border-radius: 6px !important;
+  border-radius: 8px !important;
+  color: #fff !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  padding: 7px 16px !important;
+  box-shadow: none !important;
 }
 
+.pf-v5-c-button.pf-m-primary:hover,
 .btn-primary:hover {
-  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%) !important;
+  background: var(--pulse-primary-hover) !important;
+}
+
+.pf-v5-c-button.pf-m-secondary,
+.btn-default {
+  background: transparent !important;
+  border: 1px solid var(--pulse-border) !important;
+  border-radius: 8px !important;
+  color: var(--pulse-text) !important;
+  font-weight: 600 !important;
+}
+
+/* Links */
+a {
+  color: var(--pulse-primary) !important;
+  text-decoration: none !important;
+}
+
+a:hover {
+  text-decoration: underline !important;
+}
+
+/* Alerts */
+.pf-v5-c-alert,
+.alert {
+  border-radius: 4px !important;
+  font-size: 14px !important;
+}
+
+.pf-v5-c-alert.pf-m-danger,
+.alert-error {
+  background: #fef2f2 !important;
+  border-color: #fecaca !important;
+  color: #ed4956 !important;
+}
+
+.pf-v5-c-alert.pf-m-success,
+.alert-success {
+  background: #e8f5e9 !important;
+  border-color: #c8e6c9 !important;
+  color: #2e7d32 !important;
+}
+
+/* Tables */
+.pf-v5-c-table,
+.table {
+  font-size: 14px !important;
+}
+
+.pf-v5-c-table th,
+.table th {
+  color: var(--pulse-text-muted) !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  border-color: var(--pulse-border) !important;
+}
+
+.pf-v5-c-table td,
+.table td {
+  border-color: var(--pulse-border) !important;
+  color: var(--pulse-text) !important;
+}
+
+/* Page content area */
+.pf-v5-c-page__main-section,
+.container {
+  padding: 32px !important;
+}
+
+@media (max-width: 768px) {
+  .pf-v5-c-page__main-section,
+  .container {
+    padding: 16px !important;
+  }
 }
